@@ -1,0 +1,19 @@
+body {
+    max-width: 1180px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: tahoma;
+}
+
+h1 {
+    color: rgb(237, 32, 200);
+    text-align: center;
+    padding: 10px;
+}
+.intro {
+    font-size: 22px;
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
