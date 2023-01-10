@@ -20,9 +20,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" href="/bestellungen">Bestellungen</a>
+                <a class="nav-link navactive" href="/bestellungen">Bestellungen</a>
             </li>
-            <li class="nav-item active navactive">
+            <li class="nav-item active">
               <a class="nav-link" href="/schueler">Schüler</a>
           </li>
             <li class="nav-item active">
@@ -40,13 +40,31 @@
 
     <!-- Content -->
     <div class="main">
-      <div class="welcome">
-      <h2>Willkommen im T-Learn Backend</h2>
-      <p>Hier haben Sie die Möglichkeit, sämtliche Informationen aus der Plattform-Datenbank auszulesen.<br>Klicken Sie dazu einfach auf die Menüpunkte im Header.</p>
-      <img src="/static/telekom-logo.png" width="60" style="margin-top: 50px;">
+      <div class="info">
+      <h2>Bestellungen</h2>
+      <p>Alle Bestellungen die bisher bei T-Learn getätigt wurden. Die Bestell-ID ist ebenfalls die Rechnungsnummer</p>
+      <p class="legende"><strong>Bestellung</strong><br>ID/Rechnungsnummer der Bestellung</p>
+      <p class="legende"><strong>Schüler:</strong><br>Einzigartige ID des Schülers</p>
+      <p class="legende"><strong>Kurs</strong><br>Einzigartige ID des Kurses</p>
     </div>
 
 
+      <div class="tablebox-b">
+        <table>
+          <tr>
+            <th>Bestellung</th>
+            <th>Schüler</th>
+            <th>Kurs</th>
+          </tr>
+          {% for b,k,s in bestellung %}
+          <tr>
+            <td>{{b}}</td>
+            <td>{{s}}</td>
+            <td class="tableft">{{k}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
 
     </div>
 

@@ -7,20 +7,30 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
 
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('index')}}">FlaskBlog</a>
+    <nav class="navbar navbar-expand-md navbar-light">
+        <a class="navbar-brand" href="{{ url_for('index')}}">T-Learn</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/bestellungen">Bestellungen</a>
             </li>
+            <li class="nav-item active navactive">
+              <a class="nav-link" href="/schueler">Schüler</a>
+          </li>
+            <li class="nav-item active">
+            <a class="nav-link" href="/dozenten">Dozenten</a>
+           </li>
+           <li class="nav-item active">
+            <a class="nav-link" href="/kurse">Kurse</a>
+           </li>
             </ul>
         </div>
     </nav>
@@ -29,9 +39,33 @@
     </div>
 
     <!-- Content -->
-    <div>
-      <p>Hier werden alle Bestellungen ausgegeben:</p>
-      <p>{{bestellungen}}</p>
+    <div class="main">
+      <div class="info">
+      <h2>Kurse</h2>
+      <p>Übersicht aller Kurse die bei T-Learn angeboten werden. Jeder Kurs ist mit der ID des Kurserstellers verbunden.</p>
+      <p class="legende"><strong>Titel</strong><br>Der Name des Kurses</p>
+      <p class="legende"><strong>Kurs-ID</strong><br>Einzigartige ID des Kurses</p>
+      <p class="legende"><strong>D-ID</strong><br>ID des Erstellers (Dozenten)</p>
+    </div>
+
+
+      <div class="tablebox-b">
+        <table>
+          <tr>
+            <th>Titel</th>
+            <th>ID</th>
+            <th>Doz.</th>
+          </tr>
+          {% for t,k,d in kurse %}
+          <tr>
+            <td>{{t}}</td>
+            <td>{{k}}</td>
+            <td class="tableft">{{d}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
     </div>
 
     <!-- Optional JavaScript -->

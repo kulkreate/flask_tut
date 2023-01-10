@@ -40,13 +40,31 @@
 
     <!-- Content -->
     <div class="main">
-      <div class="welcome">
-      <h2>Willkommen im T-Learn Backend</h2>
-      <p>Hier haben Sie die Möglichkeit, sämtliche Informationen aus der Plattform-Datenbank auszulesen.<br>Klicken Sie dazu einfach auf die Menüpunkte im Header.</p>
-      <img src="/static/telekom-logo.png" width="60" style="margin-top: 50px;">
+      <div class="info">
+      <h2>Dozenten</h2>
+      <p>Übersicht aller Dozenten die bei T-Learn Kurse anbieten. Schüler sind unter ihrem eigenen Punkt im Menü zu finden.</p>
+      <p class="legende"><strong>Vorname</strong><br>Vorname des Dozenten</p>
+      <p class="legende"><strong>Schüler:</strong><br>Nachname des Dozenten</p>
+      <p class="legende"><strong>ID</strong><br>Einzigartige ID des Dozenten</p>
     </div>
 
 
+      <div class="tablebox-b">
+        <table>
+          <tr>
+            <th>Vorname</th>
+            <th>Nachname</th>
+            <th>ID</th>
+          </tr>
+          {% for v,n,i in dozenten %}
+          <tr>
+            <td>{{v}}</td>
+            <td>{{n}}</td>
+            <td class="tableft">{{i}}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
 
     </div>
 

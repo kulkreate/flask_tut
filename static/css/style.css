@@ -1,19 +1,91 @@
 body {
-    max-width: 1180px;
+    max-width: 1060px;
     margin-left: auto;
     margin-right: auto;
     font-family: tahoma;
 }
 
-h1 {
-    color: rgb(237, 32, 200);
-    text-align: center;
-    padding: 10px;
+.navbar {
+    padding: 15px 60px;
+    border-radius: 0px 0px 30px 30px;
+    background-color: #ededed;
+    color: white !important;
+    box-shadow: 0px 0px 30px 0px #a2a2a2;
 }
+
+.tablebox-b {
+    border-left: solid black 1px;
+    display: flex;
+    justify-content: end;
+    width: 50%;
+}
+
+.tablebox-s {
+    border-left: solid black 1px;
+    padding-left: 60px;
+    display: inline-block;
+    width: 50%;
+}
+
+.navbar-light .navbar-brand {
+    color: #e20074 !important;
+    font-weight: 600;
+}
+
+#navbarNav {
+    justify-content: end;
+    margin-right: -15px;
+}
+
+
+.navactive {
+    text-decoration: dotted;
+}
+
+.navbar-nav li {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.main {
+    max-width: 1060px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 80px 60px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
 .intro {
     font-size: 22px;
     text-align: center;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.info {
+    padding-right: 80px;
+    width: 50%
+}
+
+.legende {
+    font-size: 14px;
+}
+
+th, td {
+    padding-left: 100px;
+    padding-bottom: 10px;
+ }
+
+.tableft {
+    text-align: end;
+}
+
+.welcome {
+    text-align: center;
+    margin-top: 60px;
+    margin-right: auto;
+    margin-left: auto;
 }
