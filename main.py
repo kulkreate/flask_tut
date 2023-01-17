@@ -1,12 +1,41 @@
 import os
 from flask import Flask, render_template, request, url_for, redirect, escape
+import os
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Query, scoped_session, sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 
 from flask import Blueprint
-from . import db
 
+auth = Blueprint('auth', __name__)
 main = Blueprint('main', __name__)
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+db = SQLAlchemy()
 
+app = Flask(__name__)
+
+engine = create_engine("mariadb+mariadbconnector://sqlkiddie3:SuperUnsicheresPasswort@127.0.0.1:3306/spielwiese_philipp")
+Base = declarative_base()
+Base.metadata.reflect(engine)
+
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+        'sqlite:///' + os.path.join(basedir, 'database.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = '\xeaF\xa9\x88\xda\xf6\x82\xf4\xa7=\xd6\xa0\xeb[F\xd1A6G\xe0\xc6W2\xb0'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+
+db_session = scoped_session(sessionmaker(bind=engine))
+db.init_app(app)
+
+from .auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
+
+from .main import main as main_blueprint
+app.register_blueprint(main_blueprint)
 
 class Bestellung(Base):
     __table__ = Base.metadata.tables['BESTELLUNG']
@@ -26,7 +55,37 @@ class Preisklasse(Base):
 class Schueler(Base):
     __table__ = Base.metadata.tables['SCHUELER']
 
+@auth.route('/login')
+def login():
+    return render_template('login.html')
 
+@auth.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+@auth.route('/signup', methods=['POST'])
+def signup_post():
+    if request.method == 'POST':
+        email = request.form['email']
+        username = request.form['username']
+        password = request.form['passwort']
+        nachname = request.form['nachname']
+        vorname = request.form['vorname']
+
+        user = db_session.query(Dozent.db_email)
+
+        if user:
+            return redirect(url_for('auth.signup'))
+
+        dozenten = Dozent(db_schueler_id=id,
+                            db_email=email,
+                            db_username=username,
+                            db_passwort=password,
+                            db_nachname=nachname,
+                            db_vorname=vorname)
+
+        db_session.add(dozenten)
+        db_session.commit()
 
 @main.route('/')
 def index():
