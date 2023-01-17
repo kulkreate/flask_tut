@@ -48,7 +48,7 @@ class Schueler(Base):
     __table__ = Base.metadata.tables['SCHUELER']
 
 @login_manager.user_loader
-def load_user(db_dozent_id):
+def load_user(id):
     return db_session.query(Dozent.db_dozent_id)
 
 @login_manager.unauthorized_handler
