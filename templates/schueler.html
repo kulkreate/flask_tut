@@ -31,6 +31,9 @@
            <li class="nav-item active">
             <a class="nav-link" href="/kurse">Kurse</a>
            </li>
+           <li class="nav-item active">
+            <a style="color:#e20074; text-decoration:underline;" class="nav-link" href="/logout">Logout</a>
+           </li>
             </ul>
         </div>
     </nav>
@@ -40,31 +43,69 @@
 
     <!-- Content -->
     <div class="main">
-      <div class="info">
-      <h2>Schüler</h2>
-      <p>Übersicht aller Schüler die sich bei T-Learn registriert haben. Dozenten sind unter ihrem eigenen Punkt im Menü zu finden.</p>
-      <p class="legende"><strong>Vorname</strong><br>Vorname des Schülers</p>
-      <p class="legende"><strong>Schüler:</strong><br>Nachname des Schülers</p>
-      <p class="legende"><strong>ID</strong><br>Einzigartige ID des Schülers</p>
-    </div>
+      <div class="information">
+      <h2>Schülerliste</h2>
+      <p>Übersicht aller Schüler die sich bei T-Learn registriert haben. Dozenten sind unter ihrem eigenen Punkt im Menü zu finden. Die "ID" bezieht sich auf die Schüler-ID, die bei jedem Schüler einzigartig ist und der Unterscheidung dient.</p>
+      </div>
 
 
-      <div class="tablebox-b">
-        <table>
+      <div>
+        <table class="tablev2">
           <tr>
+            <th>ID</th>
+            <th>E-Mail</th>
+            <th>Username</th>
             <th>Vorname</th>
             <th>Nachname</th>
-            <th>ID</th>
           </tr>
-          {% for v,n,i in schueler %}
+          {% for i,e,u,v,n in schueler %}
           <tr>
+            <td>{{i}}</td>
+            <td>{{e}}</td>
+            <td>{{u}}</td>
             <td>{{v}}</td>
             <td>{{n}}</td>
-            <td class="tableft">{{i}}</td>
           </tr>
           {% endfor %}
         </table>
       </div>
+
+
+      
+      <form class="new-entry" method="post">
+
+          <div class="form-item">
+              <input class="ip-id" type="number" name="id" placeholder="ID"></input>
+          </div>
+  
+          <div class="form-item">
+              <input class="ip-email" type="email" name="email" placeholder="E-Mail"></input>
+            </div>
+  
+          <div class="form-item">
+              <input class="ip-username" type="text" name="username" placeholder="Username"></input>
+            </div>
+<!--  
+          <div class="form-item">
+              <input class="ip-passwort" type="text" name="passwort" placeholder="Passwort"></input>
+            </div>
+
+          -->            
+            
+          <div class="form-item">
+              <input class="ip-vorname" type="text" name="vorname" placeholder="Vorname"></input>
+          </div>
+  
+          <div class="form-item">
+              <input class="ip-nachname" type="text" name="nachname" placeholder="Nachname"></input>
+          </div>
+  
+          <p>
+              <button type="submit">OK</button>
+          </p>
+
+      </form>
+
 
     </div>
 

@@ -1,15 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
-
-    <title>{% block title %} {% endblock %}</title>
+    <title>Bestellungen | T-Learn Backend</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-light">
@@ -31,43 +27,84 @@
            <li class="nav-item active">
             <a class="nav-link" href="/kurse">Kurse</a>
            </li>
+           <li class="nav-item active">
+            <a style="color:#e20074; text-decoration:underline;" class="nav-link" href="/logout">Logout</a>
+           </li>
             </ul>
         </div>
     </nav>
-    <div class="container">
-        {% block content %} {% endblock %}
-    </div>
-
-    <!-- Content -->
-    <div class="main">
-      <div class="info">
+    <main>
+      <div class="information">
       <h2>Bestellungen</h2>
-      <p>Alle Bestellungen die bisher bei T-Learn getätigt wurden. Die Bestell-ID ist ebenfalls die Rechnungsnummer</p>
-      <p class="legende"><strong>Bestellung</strong><br>ID/Rechnungsnummer der Bestellung</p>
-      <p class="legende"><strong>Schüler:</strong><br>Einzigartige ID des Schülers</p>
-      <p class="legende"><strong>Kurs</strong><br>Einzigartige ID des Kurses</p>
-    </div>
-
-
-      <div class="tablebox-b">
+      <p>Auflistung aller T-Learn Bestellungen von Schülern. Jede Bestellung ist über die Schüler-ID einem Schüler zugewiesen. Beim Kurs ist es genauso.<br><br>Status 1 = Im Warenkorb<br>Status 2 = Kurs reserviert<br>Status 3 = Abgeschlossen</p>
+      </div>
+      <div>
         <table>
           <tr>
             <th>Bestellung</th>
             <th>Schüler</th>
             <th>Kurs</th>
+            <th>Status</th>
+            <th>Datum</th>
           </tr>
-          {% for b,k,s in bestellung %}
+          {% for b,sc,k,s,d in bestellung %}
           <tr>
             <td>{{b}}</td>
+            <td>{{sc}}</td>
+            <td>{{k}}</td>
             <td>{{s}}</td>
-            <td class="tableft">{{k}}</td>
+            <td>{{d}}</td>
           </tr>
           {% endfor %}
         </table>
       </div>
 
-    </div>
+      <div class="modal-button">
+      <button type="button" class="t-button button-add" data-toggle="modal" data-target="#add-bestellung">Neuer Eintrag</button>
+      </div>
 
+      <div class="modal fade" id="add-bestellung" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal-label">Bestellung hinzufügen</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="post">
+                <div class="form-item">
+                    Bestellung (Bestellungs-ID)
+                    <input type="number" name="id"></input>
+                </div>      
+                <div class="form-item">
+                    Schüler (Schüler-ID)
+                    <input type="number" name="schueler"></input>
+                  </div>
+                <div class="form-item">
+                    Kurs (Kurs-ID)
+                    <input type="text" name="kurs"></input>
+                  </div>  
+                <div class="form-item">
+                    Status
+                    <input type="text" name="status"></input>
+                </div>
+                <div class="form-item">
+                    Datum
+                    <input type="text" name="datum"></input>
+                </div>
+                <p>
+                    <button class="t-button eintragen" type="submit">Eintragen</button>
+                </p>
+      
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

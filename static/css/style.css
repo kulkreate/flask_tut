@@ -1,9 +1,36 @@
+/* ------ GENERAL ------ */
+
 body {
     max-width: 1060px;
     margin-left: auto;
     margin-right: auto;
     font-family: tahoma;
 }
+main {
+    max-width: 1060px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 80px 60px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+}
+.t-button {
+    background-color: #ededed;
+    padding: 6px 12px;
+    border-width: 1px;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+.t-button:hover {
+    background-color: #e20074;
+    border-color: #e20074;
+    color: #fff;
+    transition: all 0.2s ease-in-out;
+}
+
+/* ----- NAVIGATION ----- */
 
 .navbar {
     padding: 15px 60px;
@@ -12,80 +39,59 @@ body {
     color: white !important;
     box-shadow: 0px 0px 30px 0px #a2a2a2;
 }
-
-.tablebox-b {
-    border-left: solid black 1px;
-    display: flex;
-    justify-content: end;
-    width: 50%;
-}
-
-.tablebox-s {
-    border-left: solid black 1px;
-    padding-left: 60px;
-    display: inline-block;
-    width: 50%;
-}
-
 .navbar-light .navbar-brand {
     color: #e20074 !important;
     font-weight: 600;
 }
-
 #navbarNav {
     justify-content: end;
     margin-right: -15px;
 }
-
-
 .navactive {
     text-decoration: dotted;
 }
-
 .navbar-nav li {
     padding-left: 10px;
     padding-right: 10px;
 }
 
-.main {
-    max-width: 1060px;
-    margin-right: auto;
-    margin-left: auto;
-    padding: 80px 60px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
 
-.intro {
-    font-size: 22px;
-    text-align: center;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.info {
-    padding-right: 80px;
-    width: 50%
-}
-
-.legende {
-    font-size: 14px;
-}
-
-th, td {
-    padding-left: 100px;
-    padding-bottom: 10px;
- }
-
-.tableft {
-    text-align: end;
-}
+/* ----- STARTSEITE ----- */
 
 .welcome {
     text-align: center;
     margin-top: 60px;
     margin-right: auto;
     margin-left: auto;
+}
+
+
+/* ----- UNTERSEITE ----- */
+
+.information {
+    width: 66%;
+    padding-bottom: 25px;
+}
+th, td, tr {
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 10px;
+ }
+.modal-button {
+    width: 100%;
+    padding-top: 25px;
+}
+.form-item {
+    text-align: left;
+}
+.modal-body input {
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: #ededed;
+    border-radius: 4px;
+    padding: 6px;
+    border: 0;
+}
+.eintragen {
+    margin-top: 15px;
 }
