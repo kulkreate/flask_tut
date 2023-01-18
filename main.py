@@ -8,6 +8,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, scoped_session, sessionmaker
 
+from user import User
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
 
@@ -23,8 +25,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '\xeaF\xa9\x88\xda\xf6\x82\xf4\xa7=\xd6\xa0\xeb[F\xd1A6G\xe0\xc6W2\xb0'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-# login_manager = LoginManager()
-# login_manager.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 db_session = scoped_session(sessionmaker(bind=engine))
 db.init_app(app)
@@ -47,17 +49,37 @@ class Preisklasse(Base):
 class Schueler(Base):
     __table__ = Base.metadata.tables['SCHUELER']
 
-# @login_manager.user_loader
-# def load_user(id):
-#     return db_session.query(Dozent.db_dozent_id)
+dozent_email = db_session.query(Dozent.db_email)
 
-# @login_manager.unauthorized_handler
-# def unauthorized():
-#     return redirect('/login')
+def find_in_user_dic(email):
+    print(dozent_email[0][email])
+    if dozent_email[0][email]:
+        return User(email, dozent_email[0][email], 'dozent', 'salt')
+    return None
 
-# @app.route('/login')
-# def login():
-#     return render_template('login.html')
+@login_manager.user_loader
+def load_user(email):
+    return find_in_user_dic(email.decode('utf-8'))
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect('/login')
+
+@app.route('/login', methods=('GET', 'POST'))
+def login():
+    if request.method == 'POST':
+        l_email = request.form['email']
+        l_passwort = request.form['passwort']
+
+        if Dozent(db_email=l_email, db_passwort=l_passwort):
+            dozent = User(l_email, l_passwort, 'dozent', 'salt')
+            login_user(dozent, remember=False)
+            return redirect('/')
+        else:
+            return redirect('/login')
+
+    if request.method == 'GET':
+        return render_template('login.html')
 
 @app.route('/signup', methods=('GET', 'POST'))
 def signup():
@@ -97,13 +119,13 @@ def index():
     return render_template('index.html')
 
 @app.route('/bestellungen')
-# @login_required
+@login_required
 def bestellungen():
     result = db_session.query(Bestellung.db_bestellung_id, Bestellung.db_schueler_id, Bestellung.db_kurs_id, Bestellung.db_bestellstatus, Bestellung.db_bestelldatum)
     return render_template('bestellungen.html', bestellung=result)
 
 @app.route('/bestellungen', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def create_bestellungen():
     if request.method == 'POST':
         id = int(request.form['id'])
@@ -124,13 +146,13 @@ def create_bestellungen():
     return render_template('bestellungen.html')
 
 @app.route('/schueler')
-# @login_required
+@login_required
 def schueler():
     result = db_session.query(Schueler.db_schueler_id, Schueler.db_email, Schueler.db_username, Schueler.db_vorname, Schueler.db_nachname)
     return render_template('schueler.html', schueler=result)
 
 @app.route('/schueler', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def create_schueler():
     if request.method == 'POST':
         id = int(request.form['id'])
@@ -152,13 +174,13 @@ def create_schueler():
 
 
 @app.route('/dozenten')
-# @login_required
+@login_required
 def dozenten():
     result = db_session.query(Dozent.db_dozent_id, Dozent.db_email, Dozent.db_username, Dozent.db_vorname, Dozent.db_nachname)
     return render_template('dozenten.html', dozenten=result)
 
 @app.route('/dozenten', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def create_dozent():
     if request.method == 'POST':
         id = int(request.form['id'])
@@ -178,19 +200,6 @@ def create_dozent():
 
     return render_template('dozenten.html')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # @app.route('/kurse')
 # # @login_required
 # def kurse():
@@ -198,12 +207,13 @@ def create_dozent():
 #     return render_template('kurse.html', kurse=result)
 
 @app.route('/kurse', methods=('GET', 'POST'))
-# @login_required
-
+@login_required
 def kurse():
     result = db_session.query(Kurs.db_kurs_id, Kurs.db_kurs_titel, Kurs.db_dozent_id, Kurs.db_kategorie_id,)
     return render_template('kurse.html', kurse=result)
 
+@app.route('/kurse', methods=('GET', 'POST'))
+@login_required
 def create_kurs():
     if request.method == 'POST':
         id = int(request.form['id'])
@@ -220,15 +230,6 @@ def create_kurs():
         return redirect(url_for('kurse'))
 
     return render_template('kurse.html')
-
-
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port='5000', debug=True)
