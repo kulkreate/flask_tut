@@ -1,56 +1,12 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
-
-    <title>{% block title %} {% endblock %}</title>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-md navbar-light">
-        <a class="navbar-brand" href="{{ url_for('index')}}">T-Learn</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="/bestellungen">Bestellungen</a>
-            </li>
-            <li class="nav-item active navactive">
-              <a class="nav-link" href="/schueler">Schüler</a>
-          </li>
-            <li class="nav-item active">
-            <a class="nav-link" href="/dozenten">Dozenten</a>
-           </li>
-           <li class="nav-item active">
-            <a class="nav-link" href="/kurse">Kurse</a>
-           </li>
-           <li class="nav-item active">
-            <a style="color:#e20074; text-decoration:underline;" class="nav-link" href="/logout">Logout</a>
-           </li>
-            </ul>
-        </div>
-    </nav>
-    <div class="container">
-        {% block content %} {% endblock %}
-    </div>
-
-    <!-- Content -->
-    <div class="main">
+{% extends "base.html" %}
+{% block content %}
+    <main>
       <div class="information">
       <h2>Schülerliste</h2>
-      <p>Übersicht aller Schüler die sich bei T-Learn registriert haben. Dozenten sind unter ihrem eigenen Punkt im Menü zu finden. Die "ID" bezieht sich auf die Schüler-ID, die bei jedem Schüler einzigartig ist und der Unterscheidung dient.</p>
+      <p>Auflistung aller Schüler die bei T-Learn registrirt sind. Jeden Schüler ist eine einzigartige ID zugeordnet, die als Unterscheidungsmerkmal genutzt werden kann. Auch E-Mail und Username sind stets einzigartig.</p>
       </div>
-
-
       <div>
-        <table class="tablev2">
+        <table>
           <tr>
             <th>ID</th>
             <th>E-Mail</th>
@@ -70,49 +26,50 @@
         </table>
       </div>
 
+      <div class="modal-button">
+      <button type="button" class="t-button button-add" data-toggle="modal" data-target="#add-schueler">Neuer Eintrag</button>
+      </div>
 
+      <div class="modal fade" id="add-schueler" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal-label">Schüler hinzufügen</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="post">
+                <div class="form-item">
+                    Schüler-ID
+                    <input type="number" name="id"></input>
+                </div>      
+                <div class="form-item">
+                    E-Mail
+                    <input type="email" name="email"></input>
+                  </div>
+                <div class="form-item">
+                    Username
+                    <input type="text" name="username"></input>
+                  </div>  
+                <div class="form-item">
+                    Vorname
+                    <input type="text" name="vorname"></input>
+                </div>
+                <div class="form-item">
+                    Nachname
+                    <input type="text" name="nachname"></input>
+                </div>
+                <p>
+                    <button class="t-button eintragen" type="submit">Eintragen</button>
+                </p>
       
-      <form class="new-entry" method="post">
-
-          <div class="form-item">
-              <input class="ip-id" type="number" name="id" placeholder="ID"></input>
-          </div>
-  
-          <div class="form-item">
-              <input class="ip-email" type="email" name="email" placeholder="E-Mail"></input>
+            </form>
             </div>
-  
-          <div class="form-item">
-              <input class="ip-username" type="text" name="username" placeholder="Username"></input>
-            </div>
-<!--  
-          <div class="form-item">
-              <input class="ip-passwort" type="text" name="passwort" placeholder="Passwort"></input>
-            </div>
-
-          -->            
-            
-          <div class="form-item">
-              <input class="ip-vorname" type="text" name="vorname" placeholder="Vorname"></input>
           </div>
-  
-          <div class="form-item">
-              <input class="ip-nachname" type="text" name="nachname" placeholder="Nachname"></input>
-          </div>
-  
-          <p>
-              <button type="submit">OK</button>
-          </p>
+        </div>
+      </div>
 
-      </form>
-
-
-    </div>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  </body>
-</html>
+    </main>
+{% endblock %}

@@ -47,9 +47,6 @@ main {
     justify-content: end;
     margin-right: -15px;
 }
-.navactive {
-    text-decoration: dotted;
-}
 .navbar-nav li {
     padding-left: 10px;
     padding-right: 10px;
