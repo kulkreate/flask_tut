@@ -50,16 +50,16 @@ class Schueler(Base):
     __table__ = Base.metadata.tables['SCHUELER']
 
 dozent_email = db_session.query(Dozent.db_email)
+dozenten = db_session.query(Dozent.db_email, Dozent.db_passwort)
 
 def find_in_user_dic(email):
-    print(dozent_email[0][email])
     if dozent_email[0][email]:
-        return User(email, dozent_email[0][email], 'dozent', 'salt')
+        return User(email, dozenten[0][0], 'dozent', 'salt')
     return None
 
 @login_manager.user_loader
-def load_user(email):
-    return find_in_user_dic(email.decode('utf-8'))
+def load_user(id):
+    return find_in_user_dic(id.decode('ascii'))
 
 @login_manager.unauthorized_handler
 def unauthorized():
