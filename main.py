@@ -4,9 +4,10 @@ from flask import Flask, escape, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_login.utils import fresh_login_required, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, asc, desc, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, scoped_session, sessionmaker
+
 
 from user import User
 
@@ -49,12 +50,11 @@ class Preisklasse(Base):
 class Schueler(Base):
     __table__ = Base.metadata.tables['SCHUELER']
 
-dozent_email = db_session.query(Dozent.db_email)
-dozenten = db_session.query(Dozent.db_email, Dozent.db_passwort)
+dozent_data  = db_session.query(Dozent.db_email, Dozent.db_passwort)
 
 def find_in_user_dic(email):
-    if dozent_email[0][email]:
-        return User(email, dozenten[0][0], 'dozent', 'salt')
+    if dozent_data[0]:
+        return User(email, dozent_data[0][0], 'dozent', 'salt')
     return None
 
 @login_manager.user_loader
@@ -73,13 +73,21 @@ def login():
 
         if Dozent(db_email=l_email, db_passwort=l_passwort):
             dozent = User(l_email, l_passwort, 'dozent', 'salt')
-            login_user(dozent, remember=False)
+            login_user(dozent, remember=True)
             return redirect('/')
         else:
             return redirect('/login')
 
     if request.method == 'GET':
         return render_template('login.html')
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    if not current_user.is_authenticated:
+        return redirect("/login")
+
+    logout_user()
+    return redirect("/login")
 
 @app.route('/signup', methods=('GET', 'POST'))
 def signup():
@@ -95,11 +103,9 @@ def signup():
         # if user:
         #     return redirect(url_for('signup'))
 
-        id = db_session.query(Dozent.db_dozent_id)
-        new_id_str = str(id)
-        new_id = int(new_id_str) + 1
+        id = db_session.query(Dozent.db_dozent_id).order_by(desc(Dozent.db_dozent_id))
 
-        dozenten = Dozent(db_dozent_id=new_id + 1,
+        dozenten = Dozent(db_dozent_id=id[0][0]+1,
                             db_email=email,
                             db_username=username,
                             db_passwort=passwort,
