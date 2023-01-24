@@ -68,19 +68,25 @@ def login():
 
         a_data = db_session.query(Dozent.db_email, Dozent.db_passwort)
 
-        for email, passwort in a_data:
-            print(email, passwort)
-            if l_email == email and l_passwort == passwort:
-                print('test')
-                dozent = User(l_email, l_passwort, 'dozent', 'salt')
-                print('test')
-                login_user(dozent, remember=False)
-                return redirect('/')
-            else:
-                return
+        checkin = check_login(l_email, l_passwort)
+
+        if checkin == True:
+            return redirect('/')
+        else:
+            return redirect('/login')
 
     if request.method == 'GET':
         return render_template('login.html')
+
+def check_login(l_email, l_passwort):
+    a_data = db_session.query(Dozent.db_email, Dozent.db_passwort)
+
+    for email, passwort in a_data:
+        if l_email == email and l_passwort == passwort:
+            dozent = User(l_email, l_passwort, 'dozent', 'salt')
+            login_user(dozent, remember=False)
+            return True
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
