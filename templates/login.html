@@ -1,29 +1,16 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Login</h3>
-    <div class="box">
-        <form method="POST" action="/login">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="passwort" placeholder="Your Password">
-                </div>
-            </div>
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox">
-                    Remember me
-                </label>
-            </div>
-            <button class="button is-block is-info is-large is-fullwidth">Login</button>
-        </form>
-    </div>
+<h2 class="sp-heading">Login</h2>
+<div class="acc">
+    <form method="POST" action="/login">
+        <div class="form-item">
+            <input class="input is-large" type="email" name="email" placeholder="E-Mail" autofocus="">
+        </div>
+        <div class="form-item">
+            <input class="input is-large" type="password" name="passwort" placeholder="Passwort">
+        </div>
+        <p>Noch kein Account? <a href="/registrieren">Registrieren</a></p>
+        <button class="t-button form-submit">Anmelden</button>
+    </form>
 </div>
 {% endblock %}

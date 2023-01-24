@@ -1,75 +1,71 @@
 {% extends "base.html" %}
 {% block content %}
-    <main>
-      <div class="information">
-      <h2>Dozentenliste</h2>
-      <p>Übersicht aller Dozenten die bei T-Learn Kurse anbieten und Schüler verwalten, unterschieden anhand der einzigartigen Dozenten-ID. Schüler sind unter ihrem eigenen Punkt im Menü zu finden.</p>
-      </div>
-      <div>
-        <table>
-          <tr>
-            <th>ID</th>
-            <th>E-Mail</th>
-            <th>Username</th>
-            <th>Vorname</th>
-            <th>Nachname</th>
-          </tr>
-          {% for i,e,u,v,n in dozenten %}
-          <tr>
-            <td>{{i}}</td>
-            <td>{{e}}</td>
-            <td>{{u}}</td>
-            <td>{{v}}</td>
-            <td>{{n}}</td>
-          </tr>
-          {% endfor %}
-        </table>
-      </div>
+<div class="information">
+  <h2>Dozentenliste</h2>
+  <p>Übersicht aller Dozenten die bei T-Learn Kurse anbieten und Schüler verwalten, unterschieden anhand der einzigartigen Dozenten-ID. Schüler sind unter ihrem eigenen Punkt im Menü zu finden.</p>
+</div>
+<div>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>E-Mail</th>
+      <th>Username</th>
+      <th>Vorname</th>
+      <th>Nachname</th>
+    </tr>
+    {% for i,e,u,v,n in dozenten %}
+    <tr>
+      <td>{{i}}</td>
+      <td>{{e}}</td>
+      <td>{{u}}</td>
+      <td>{{v}}</td>
+      <td>{{n}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
 
-      <div class="modal-button">
-      <button type="button" class="t-button button-add" data-toggle="modal" data-target="#add-dozent">Neuer Eintrag</button>
-      </div>
+<div class="modal-button">
+  <button type="button" class="t-button button-add" data-toggle="modal" data-target="#add-dozent">Neuer Eintrag</button>
+</div>
 
-      <div class="modal fade" id="add-dozent" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal-label">Dozent hinzufügen</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form method="post">
-                <div class="form-item">
-                    Dozent-ID
-                    <input type="number" name="id"></input>
-                </div>      
-                <div class="form-item">
-                    E-Mail
-                    <input type="email" name="email"></input>
-                  </div>
-                <div class="form-item">
-                    Username
-                    <input type="text" name="username"></input>
-                  </div>  
-                <div class="form-item">
-                    Vorname
-                    <input type="text" name="vorname"></input>
-                </div>
-                <div class="form-item">
-                    Nachname
-                    <input type="text" name="nachname"></input>
-                </div>
-                <p>
-                    <button class="t-button eintragen" type="submit">Eintragen</button>
-                </p>
-      
-            </form>
-            </div>
+<div class="modal fade" id="add-dozent" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-label">Dozent hinzufügen</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post">
+          <div class="form-item">
+            Dozent-ID
+            <input type="number" name="id"></input>
+          </div>      
+          <div class="form-item">
+            E-Mail
+            <input type="email" name="email"></input>
           </div>
-        </div>
+          <div class="form-item">
+            Username
+            <input type="text" name="username"></input>
+          </div>  
+          <div class="form-item">
+            Vorname
+            <input type="text" name="vorname"></input>
+          </div>
+          <div class="form-item">
+            Nachname
+            <input type="text" name="nachname"></input>
+          </div>
+          <p>
+            <button class="t-button form-submit" type="submit">Eintragen</button>
+          </p>
+        </form>
       </div>
-
-    </main>
+    </div>
+  </div>
+</div>
 {% endblock %}

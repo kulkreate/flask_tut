@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask, escape, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_login.utils import fresh_login_required, login_required
@@ -7,13 +6,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, asc, desc, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, scoped_session, sessionmaker
-
-
 from user import User
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
-
 app = Flask(__name__)
 
 engine = create_engine("mariadb+mariadbconnector://sqlkiddie3:SuperUnsicheresPasswort@127.0.0.1:3306/spielwiese_philipp")
@@ -61,6 +57,16 @@ def find_in_user_dic(email):
 def load_user(id):
     return find_in_user_dic(id.decode('ascii'))
 
+
+
+
+
+
+
+
+
+
+
 @login_manager.unauthorized_handler
 def unauthorized():
     return redirect('/login')
@@ -71,15 +77,34 @@ def login():
         l_email = request.form['email']
         l_passwort = request.form['passwort']
 
+        # a_email = db_session.query(Dozent.db_email)
+        # a_passwort = db_session.query(Dozent.db_passwort)
+
+        # if l_email in a_email and l_passwort in a_passwort:
+        #     dozent = User(l_email, l_passwort, 'dozent', 'salt')
+        #     login_user(dozent, remember=False)
+        #     return redirect('/')
+        # else:
+        #     return redirect('/login')
+
+
+
         if Dozent(db_email=l_email, db_passwort=l_passwort):
             dozent = User(l_email, l_passwort, 'dozent', 'salt')
-            login_user(dozent, remember=True)
+            login_user(dozent, remember=False)
             return redirect('/')
         else:
             return redirect('/login')
 
     if request.method == 'GET':
         return render_template('login.html')
+
+
+
+
+
+
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
@@ -89,19 +114,24 @@ def logout():
     logout_user()
     return redirect("/login")
 
-@app.route('/signup', methods=('GET', 'POST'))
-def signup():
+
+
+
+
+
+
+
+
+
+
+@app.route('/registrieren', methods=('GET', 'POST'))
+def registrieren():
     if request.method == 'POST':
         email = request.form['email']
         username = request.form['username']
         passwort = request.form['passwort']
         nachname = request.form['nachname']
         vorname = request.form['vorname']
-
-        # user = db_session.query(Dozent.db_email)
-
-        # if user:
-        #     return redirect(url_for('signup'))
 
         id = db_session.query(Dozent.db_dozent_id).order_by(desc(Dozent.db_dozent_id))
 
@@ -117,10 +147,22 @@ def signup():
 
         return redirect(url_for('index'))
 
-    return render_template('signup.html')
+    return render_template('registrieren.html')
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/')
-# @login_required
+@login_required
 def index():
     return render_template('index.html')
 
@@ -129,6 +171,7 @@ def index():
 def bestellungen():
     result = db_session.query(Bestellung.db_bestellung_id, Bestellung.db_schueler_id, Bestellung.db_kurs_id, Bestellung.db_bestellstatus, Bestellung.db_bestelldatum)
     return render_template('bestellungen.html', bestellung=result)
+
 
 @app.route('/bestellungen', methods=('GET', 'POST'))
 @login_required
@@ -205,12 +248,6 @@ def create_dozent():
         return redirect(url_for('dozenten'))
 
     return render_template('dozenten.html')
-
-# @app.route('/kurse')
-# # @login_required
-# def kurse():
-#     result = db_session.query(Kurs.db_kurs_id, Kurs.db_kurs_titel, Kurs.db_dozent_id, Kurs.db_kategorie_id,)
-#     return render_template('kurse.html', kurse=result)
 
 @app.route('/kurse', methods=('GET', 'POST'))
 @login_required

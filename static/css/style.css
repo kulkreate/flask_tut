@@ -16,6 +16,15 @@ main {
     text-align: center;
     flex-wrap: wrap;
 }
+a {
+    color:#e20074;
+    transition: all 0.2s ease-in-out;
+}
+a:hover {
+    color: black;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
 .t-button {
     background-color: #ededed;
     padding: 6px 12px;
@@ -81,7 +90,7 @@ th, td, tr {
 .form-item {
     text-align: left;
 }
-.modal-body input {
+input {
     width: 100%;
     margin-bottom: 10px;
     background-color: #ededed;
@@ -89,6 +98,23 @@ th, td, tr {
     padding: 6px;
     border: 0;
 }
-.eintragen {
+.form-submit {
     margin-top: 15px;
+}
+
+
+/* ----- ACCOUNTSEITEN ----- */
+
+.sp-heading {
+    width: 100%;
+    padding-bottom: 25px;
+}
+.acc input {
+    width: 250px;
+}
+.checkbox {
+    width: 100%;
+}
+.check {
+    width: 25px;
 }
