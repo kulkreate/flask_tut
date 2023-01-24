@@ -16,8 +16,7 @@ engine = create_engine("mariadb+mariadbconnector://sqlkiddie3:SuperUnsicheresPas
 Base = declarative_base()
 Base.metadata.reflect(engine)
 
-app.config['SQLALCHEMY_DATABASE_URI'] =\
-        'sqlite:///' + os.path.join(basedir, 'database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '\xeaF\xa9\x88\xda\xf6\x82\xf4\xa7=\xd6\xa0\xeb[F\xd1A6G\xe0\xc6W2\xb0'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
@@ -57,16 +56,6 @@ def find_in_user_dic(email):
 def load_user(id):
     return find_in_user_dic(id.decode('ascii'))
 
-
-
-
-
-
-
-
-
-
-
 @login_manager.unauthorized_handler
 def unauthorized():
     return redirect('/login')
@@ -77,34 +66,21 @@ def login():
         l_email = request.form['email']
         l_passwort = request.form['passwort']
 
-        # a_email = db_session.query(Dozent.db_email)
-        # a_passwort = db_session.query(Dozent.db_passwort)
+        a_data = db_session.query(Dozent.db_email, Dozent.db_passwort)
 
-        # if l_email in a_email and l_passwort in a_passwort:
-        #     dozent = User(l_email, l_passwort, 'dozent', 'salt')
-        #     login_user(dozent, remember=False)
-        #     return redirect('/')
-        # else:
-        #     return redirect('/login')
-
-
-
-        if Dozent(db_email=l_email, db_passwort=l_passwort):
-            dozent = User(l_email, l_passwort, 'dozent', 'salt')
-            login_user(dozent, remember=False)
-            return redirect('/')
-        else:
-            return redirect('/login')
+        for email, passwort in a_data:
+            print(email, passwort)
+            if l_email == email and l_passwort == passwort:
+                print('test')
+                dozent = User(l_email, l_passwort, 'dozent', 'salt')
+                print('test')
+                login_user(dozent, remember=False)
+                return redirect('/')
+            else:
+                return
 
     if request.method == 'GET':
         return render_template('login.html')
-
-
-
-
-
-
-
 
 @app.route("/logout", methods=["GET"])
 def logout():
@@ -113,16 +89,6 @@ def logout():
 
     logout_user()
     return redirect("/login")
-
-
-
-
-
-
-
-
-
-
 
 @app.route('/registrieren', methods=('GET', 'POST'))
 def registrieren():
@@ -148,18 +114,6 @@ def registrieren():
         return redirect(url_for('index'))
 
     return render_template('registrieren.html')
-
-
-
-
-
-
-
-
-
-
-
-
 
 @app.route('/')
 @login_required
@@ -220,7 +174,6 @@ def create_schueler():
         return redirect(url_for('schueler'))
 
     return render_template('schueler.html')
-
 
 @app.route('/dozenten')
 @login_required
