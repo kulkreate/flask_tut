@@ -1,11 +1,13 @@
 import os
+import bcrypt
 from flask import Flask, escape, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_login.utils import fresh_login_required, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, asc, desc, func
+from sqlalchemy import create_engine, asc, desc, func, select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, scoped_session, sessionmaker
+from sqlalchemy.sql.expression import exists
 from user import User
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -29,19 +31,14 @@ db.init_app(app)
 
 class Bestellung(Base):
     __table__ = Base.metadata.tables['BESTELLUNG']
-
 class Dozent(Base):
     __table__ = Base.metadata.tables['DOZENT']
-
 class Kategorie(Base):
     __table__ = Base.metadata.tables['KATEGORIE']
-
 class Kurs(Base):
     __table__ = Base.metadata.tables['KURS']
-
 class Preisklasse(Base):
     __table__ = Base.metadata.tables['PREISKLASSE']
-
 class Schueler(Base):
     __table__ = Base.metadata.tables['SCHUELER']
 
@@ -60,42 +57,6 @@ def load_user(id):
 def unauthorized():
     return redirect('/login')
 
-@app.route('/login', methods=('GET', 'POST'))
-def login():
-    if request.method == 'POST':
-        l_email = request.form['email']
-        l_passwort = request.form['passwort']
-
-        a_data = db_session.query(Dozent.db_email, Dozent.db_passwort)
-
-        checkin = check_login(l_email, l_passwort)
-
-        if checkin == True:
-            return redirect('/')
-        else:
-            return redirect('/login')
-
-    if request.method == 'GET':
-        return render_template('login.html')
-
-def check_login(l_email, l_passwort):
-    a_data = db_session.query(Dozent.db_email, Dozent.db_passwort)
-
-    for email, passwort in a_data:
-        if l_email == email and l_passwort == passwort:
-            dozent = User(l_email, l_passwort, 'dozent', 'salt')
-            login_user(dozent, remember=False)
-            return True
-
-
-@app.route("/logout", methods=["GET"])
-def logout():
-    if not current_user.is_authenticated:
-        return redirect("/login")
-
-    logout_user()
-    return redirect("/login")
-
 @app.route('/registrieren', methods=('GET', 'POST'))
 def registrieren():
     if request.method == 'POST':
@@ -104,22 +65,77 @@ def registrieren():
         passwort = request.form['passwort']
         nachname = request.form['nachname']
         vorname = request.form['vorname']
-
+        b_passwort = passwort.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashedpw = bcrypt.hashpw(b_passwort, salt)
         id = db_session.query(Dozent.db_dozent_id).order_by(desc(Dozent.db_dozent_id))
-
         dozenten = Dozent(db_dozent_id=id[0][0]+1,
                             db_email=email,
                             db_username=username,
-                            db_passwort=passwort,
+                            db_passwort=hashedpw,
                             db_nachname=nachname,
                             db_vorname=vorname)
-
         db_session.add(dozenten)
         db_session.commit()
-
+        dozent = User(email, passwort, 'dozent', 'salt')
+        login_user(dozent, remember=False)
         return redirect(url_for('index'))
-
     return render_template('registrieren.html')
+
+@app.route('/login', methods=('GET', 'POST'))
+def login():
+    if request.method == 'POST':
+        l_email = request.form['email']
+        l_passwort = request.form['passwort']
+        byte_l_passwort = l_passwort.encode('utf-8')
+        checkin = login_check(l_email, l_passwort, byte_l_passwort)
+        if checkin == True:
+            return redirect('/')
+        else:
+            return redirect('/login')
+    if request.method == 'GET':
+        return render_template('login.html')
+
+def login_check(l_email, l_passwort, byte_l_passwort):
+    dbpw = None
+    dbpw_query = select(Dozent.db_passwort).where(Dozent.db_email==l_email)
+    with engine.connect() as conn:
+        for pwdic in conn.execute(dbpw_query):    
+            dbpw = bytes(pwdic[0], 'utf-8')
+    if dbpw != None and bcrypt.checkpw(byte_l_passwort, dbpw):
+        dozent = User(l_email, l_passwort, 'dozent', 'salt')
+        login_user(dozent, remember=False)
+        return True
+
+    # verify_login = db_session.query(Dozent).filter(Dozent.db_email=='timokeller@gmail.com', Dozent.db_passwort=='Hallo123?')
+    # print(db_session.query(verify_login.exists()).scalar())
+
+    # Mithilfe von Login-Email dazugehöriges verschl. PW abfragen
+    # dbpw_query = select(Dozent.db_passwort).where(Dozent.db_email=='ogreco@gmail.com')
+    # with engine.connect() as conn:
+    #     for pwdic in conn.execute(dbpw_query):    
+    #         dbpw = bytes(pwdic[0], 'utf-8')
+
+    # testpw = 'Hallo'
+    # testpw_b = testpw.encode('utf-8')
+    # if bcrypt.checkpw(testpw_b, dbpw):
+    #     print('Es hat geklappt')
+
+    # def check_login(l_email, l_passwort, byte_l_passwort):
+    #     a_data = db_session.query(Dozent.db_email, Dozent.db_passwort)
+    #     for email, passwort in a_data:
+    #         byte_passwort = bytes(passwort, 'utf-8')
+    #         if l_email == email and bcrypt.checkpw(byte_l_passwort, byte_passwort):
+    #             dozent = User(l_email, l_passwort, 'dozent', 'salt')
+    #             login_user(dozent, remember=False)
+    #             return True
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    if not current_user.is_authenticated:
+        return redirect("/login")
+    logout_user()
+    return redirect("/login")
 
 @app.route('/')
 @login_required
@@ -131,7 +147,6 @@ def index():
 def bestellungen():
     result = db_session.query(Bestellung.db_bestellung_id, Bestellung.db_schueler_id, Bestellung.db_kurs_id, Bestellung.db_bestellstatus, Bestellung.db_bestelldatum)
     return render_template('bestellungen.html', bestellung=result)
-
 
 @app.route('/bestellungen', methods=('GET', 'POST'))
 @login_required
@@ -149,9 +164,7 @@ def create_bestellungen():
                             db_bestelldatum=datum)
         db_session.add(bestellung)
         db_session.commit()
-
         return redirect(url_for('bestellungen'))
-
     return render_template('bestellungen.html')
 
 @app.route('/schueler')
@@ -176,9 +189,7 @@ def create_schueler():
                             db_vorname=vorname)
         db_session.add(schueler)
         db_session.commit()
-
         return redirect(url_for('schueler'))
-
     return render_template('schueler.html')
 
 @app.route('/dozenten')
@@ -203,9 +214,7 @@ def create_dozent():
                             db_vorname=vorname)
         db_session.add(dozent)
         db_session.commit()
-
         return redirect(url_for('dozenten'))
-
     return render_template('dozenten.html')
 
 @app.route('/kurse', methods=('GET', 'POST'))
@@ -228,9 +237,7 @@ def create_kurs():
                     db_kategorie_id=kategorie)
         db_session.add(kurs)
         db_session.commit()
-
         return redirect(url_for('kurse'))
-
     return render_template('kurse.html')
 
 if __name__ == '__main__':
