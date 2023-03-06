@@ -107,29 +107,6 @@ def login_check(l_email, l_passwort, byte_l_passwort):
         login_user(dozent, remember=False)
         return True
 
-    # verify_login = db_session.query(Dozent).filter(Dozent.db_email=='timokeller@gmail.com', Dozent.db_passwort=='Hallo123?')
-    # print(db_session.query(verify_login.exists()).scalar())
-
-    # Mithilfe von Login-Email dazugehöriges verschl. PW abfragen
-    # dbpw_query = select(Dozent.db_passwort).where(Dozent.db_email=='ogreco@gmail.com')
-    # with engine.connect() as conn:
-    #     for pwdic in conn.execute(dbpw_query):    
-    #         dbpw = bytes(pwdic[0], 'utf-8')
-
-    # testpw = 'Hallo'
-    # testpw_b = testpw.encode('utf-8')
-    # if bcrypt.checkpw(testpw_b, dbpw):
-    #     print('Es hat geklappt')
-
-    # def check_login(l_email, l_passwort, byte_l_passwort):
-    #     a_data = db_session.query(Dozent.db_email, Dozent.db_passwort)
-    #     for email, passwort in a_data:
-    #         byte_passwort = bytes(passwort, 'utf-8')
-    #         if l_email == email and bcrypt.checkpw(byte_l_passwort, byte_passwort):
-    #             dozent = User(l_email, l_passwort, 'dozent', 'salt')
-    #             login_user(dozent, remember=False)
-    #             return True
-
 @app.route("/logout", methods=["GET"])
 def logout():
     if not current_user.is_authenticated:
