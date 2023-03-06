@@ -8,7 +8,11 @@
     <title>T-Learn Backend</title>
   </head>
   <body>
+    <header>
     <nav class="navbar navbar-expand-md navbar-light">
+      <a href="{{ url_for('index')}}">
+      <img class="header-logo" src="/static/telekom-logo.png" width="30" style="margin-right:15px;" href="{{ url_for('index')}}">
+      </a>
       <a class="navbar-brand" href="{{ url_for('index')}}">T-Learn</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -35,9 +39,132 @@
         </ul>
       </div>
     </nav>
+  </header>
     <main>
-      {% block content %} {% endblock %}
+      {% block content %} {% endblock %}      
     </main>
+
+    <div class="transition-div"></div>
+    <footer>
+      <div class="footer-top">
+        <a class="footer-logo-a" href="{{ url_for('index')}}">
+        <img class="footer-logo" src="/static/telekom-logo-white.png" height="25px" href="{{ url_for('index')}}">
+        </a>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© Deutsche Telekom AG</p>
+          <ul class="footer-links">
+            <li>
+              <a href="#">Kontakt</a>
+            </li>
+            <li>
+              <a href="#">Allgemeine Geschäftsbedingungen</a>
+            </li>
+            <li>
+              <a href="#">Impressum</a>
+            </li>
+            <li>
+              <a href="#">Datenschutz</a>
+            </li>
+          </ul>
+      </div>
+    </footer>
+
+    <!-- <scale-telekom-footer>
+      <scale-telekom-footer-content>
+        <scale-telekom-footer-extended-navigation slot="extended-navigation">
+          <scale-telekom-footer-extended-navigation-column heading="TITLE">
+            <ul>
+              <li>
+                <a href="#">Topic One</a>
+              </li>
+              <li>
+                <a href="#">Topic One</a>
+              </li>
+              <li>
+                <a href="#">Topic One</a>
+              </li>
+              <li>
+                <a href="#">Topic One</a>
+              </li>
+            </ul>
+          </scale-telekom-footer-extended-navigation-column>
+          <scale-telekom-footer-extended-navigation-column heading="TOPIC TWO">
+            <ul>
+              <li>
+                <a href="#">Topic Two</a>
+              </li>
+              <li>
+                <a href="#">Topic Two</a>
+              </li>
+              <li>
+                <a href="#">Topic Two</a>
+              </li>
+              <li>
+                <a href="#">Topic Two</a>
+              </li>
+            </ul>
+          </scale-telekom-footer-extended-navigation-column>
+          <scale-telekom-footer-extended-navigation-column
+            heading="Topic Three"
+          >
+            <ul>
+              <li>
+                <a href="#">Topic Three </a>
+              </li>
+              <li>
+                <a href="#">Topic Three </a>
+              </li>
+              <li>
+                <a href="#">Topic Three </a>
+              </li>
+              <li>
+                <a href="#">Topic Three </a>
+              </li>
+            </ul>
+          </scale-telekom-footer-extended-navigation-column>
+          <scale-telekom-footer-extended-navigation-column heading="Topic Four">
+            <ul>
+              <li>
+                <a href="#">Topic Four </a>
+              </li>
+              <li>
+                <a href="#">Topic Four </a>
+              </li>
+              <li>
+                <a href="#">Topic Four </a>
+              </li>
+              <li>
+                <a href="#">Topic Four </a>
+              </li>
+            </ul>
+          </scale-telekom-footer-extended-navigation-column>
+        </scale-telekom-footer-extended-navigation>
+        <span slot="notice"> © Deutsche Telekom AG </span>
+        <ul slot="navigation">
+          <li>
+            <a href="#"> Impressum </a>
+          </li>
+          <li>
+            <a href="#"> Datenschutz </a>
+          </li>
+          <li>
+            <a href="#"> AGB </a>
+          </li>
+          <li>
+            <a href="#"> Produktinformationsblatt </a>
+          </li>
+          <li>
+            <a href="#"> Verbraucherinformationen </a>
+          </li>
+          <li>
+            <a href="#"> Jugendschutz </a>
+          </li>
+        </ul>
+      </scale-telekom-footer-content>
+    </scale-telekom-footer> -->
+
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>

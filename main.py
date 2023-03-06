@@ -177,12 +177,12 @@ def schueler():
 @login_required
 def create_schueler():
     if request.method == 'POST':
-        id = int(request.form['id'])
+        #id = int(request.form['id'])
         email = request.form['email']
         username = request.form['username']
         nachname = request.form['nachname']
         vorname = request.form['vorname']
-        schueler = Schueler(db_schueler_id=id,
+        schueler = Schueler(#db_schueler_id=id,
                             db_email=email,
                             db_username=username,
                             db_nachname=nachname,
@@ -227,11 +227,11 @@ def kurse():
 @login_required
 def create_kurs():
     if request.method == 'POST':
-        id = int(request.form['id'])
+        #id = int(request.form['id'])
         titel = request.form['titel']
         dozent = request.form['dozent']
         kategorie = request.form['kategorie']
-        kurs = Kurs(db_kurs_id=id,
+        kurs = Kurs(#db_kurs_id=id,
                     db_kurs_titel=titel,
                     db_dozent_id=dozent,
                     db_kategorie_id=kategorie)
