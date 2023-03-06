@@ -68,9 +68,7 @@ def registrieren():
         b_passwort = passwort.encode('utf-8')
         salt = bcrypt.gensalt()
         hashedpw = bcrypt.hashpw(b_passwort, salt)
-        id = db_session.query(Dozent.db_dozent_id).order_by(desc(Dozent.db_dozent_id))
-        dozenten = Dozent(db_dozent_id=id[0][0]+1,
-                            db_email=email,
+        dozenten = Dozent(db_email=email,
                             db_username=username,
                             db_passwort=hashedpw,
                             db_nachname=nachname,
@@ -129,13 +127,12 @@ def bestellungen():
 @login_required
 def create_bestellungen():
     if request.method == 'POST':
-        id = int(request.form['id'])
         schueler = request.form['schueler']
         kurs = request.form['kurs']
         status = request.form['status']
         datum = request.form['datum']
-        bestellung = Bestellung(db_bestellung_id=id,
-                            db_schueler_id=schueler,
+        print(kurs)
+        bestellung = Bestellung(db_schueler_id=schueler,
                             db_kurs_id=kurs,
                             db_bestellstatus=status,
                             db_bestelldatum=datum)
@@ -154,13 +151,11 @@ def schueler():
 @login_required
 def create_schueler():
     if request.method == 'POST':
-        #id = int(request.form['id'])
         email = request.form['email']
         username = request.form['username']
         nachname = request.form['nachname']
         vorname = request.form['vorname']
-        schueler = Schueler(#db_schueler_id=id,
-                            db_email=email,
+        schueler = Schueler(db_email=email,
                             db_username=username,
                             db_nachname=nachname,
                             db_vorname=vorname)
@@ -179,16 +174,14 @@ def dozenten():
 @login_required
 def create_dozent():
     if request.method == 'POST':
-        id = int(request.form['id'])
         email = request.form['email']
         username = request.form['username']
         nachname = request.form['nachname']
         vorname = request.form['vorname']
-        dozent = Dozent(db_dozent_id=id,
-                            db_email=email,
-                            db_username=username,
-                            db_nachname=nachname,
-                            db_vorname=vorname)
+        dozent = Dozent(db_email=email,
+                        db_username=username,
+                        db_nachname=nachname,
+                        db_vorname=vorname)
         db_session.add(dozent)
         db_session.commit()
         return redirect(url_for('dozenten'))
@@ -200,16 +193,14 @@ def kurse():
     result = db_session.query(Kurs.db_kurs_id, Kurs.db_kurs_titel, Kurs.db_dozent_id, Kurs.db_kategorie_id,)
     return render_template('kurse.html', kurse=result)
 
-@app.route('/kurse', methods=('GET', 'POST'))
+@app.route('/kurserstellung', methods=('GET', 'POST'))
 @login_required
 def create_kurs():
     if request.method == 'POST':
-        #id = int(request.form['id'])
         titel = request.form['titel']
         dozent = request.form['dozent']
         kategorie = request.form['kategorie']
-        kurs = Kurs(#db_kurs_id=id,
-                    db_kurs_titel=titel,
+        kurs = Kurs(db_kurs_titel=titel,
                     db_dozent_id=dozent,
                     db_kategorie_id=kategorie)
         db_session.add(kurs)
