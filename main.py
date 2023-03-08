@@ -4,11 +4,12 @@ from flask import Flask, escape, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_login.utils import fresh_login_required, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, asc, desc, func, select
+from sqlalchemy import create_engine, asc, desc, select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, scoped_session, sessionmaker
-from sqlalchemy.sql.expression import exists
+from sqlalchemy.sql.expression import exists, func
 from user import User
+import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
@@ -117,10 +118,18 @@ def logout():
 def index():
     return render_template('index.html')
 
+    date = db_session.query(Bestellung.db_bestelldatum)
+    str_date = str(date[0])
+    print(str_date)
+    dt = datetime.datetime.strptime(str_date, '%Y-%m-%d').strftime('%d.%m.%Y')
+    result.append(dt)
+    print(result)
 @app.route('/bestellungen')
 @login_required
 def bestellungen():
     result = db_session.query(Bestellung.db_bestellung_id, Bestellung.db_schueler_id, Bestellung.db_kurs_id, Bestellung.db_bestellstatus, Bestellung.db_bestelldatum)
+    result = [(r[0], r[1], r[2], r[3], datetime.datetime.strptime(r[4], '%Y-%m-%d').strftime('%d.%m.%Y')) for r in result]
+
     return render_template('bestellungen.html', bestellung=result)
 
 @app.route('/bestellungen', methods=('GET', 'POST'))
