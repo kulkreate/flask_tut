@@ -11,6 +11,12 @@ from sqlalchemy.sql.expression import exists, func
 from user import User
 import datetime
 
+import requests
+import json
+
+# response = requests.get('http://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow')
+# print(response)
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -36,8 +42,14 @@ class Dozent(Base):
     __table__ = Base.metadata.tables['DOZENT']
 class Kategorie(Base):
     __table__ = Base.metadata.tables['KATEGORIE']
-class Kurs(Base):
-    __table__ = Base.metadata.tables['KURS']
+# class Kurs(Base):
+#     __table__ = Base.metadata.tables['KURS']
+class Kurs(db.Model):
+    __tablename__ = 'KURS'
+    db_kurs_id = db.Column(db.Integer, primary_key = True)
+    db_kategorie_id = db.Column(db.Integer)
+    db_dozent_id = db.Column(db.Integer)
+    db_kurs_titel = db.Column(db.String(25))
 class Preisklasse(Base):
     __table__ = Base.metadata.tables['PREISKLASSE']
 class Schueler(Base):
@@ -118,12 +130,13 @@ def logout():
 def index():
     return render_template('index.html')
 
-    date = db_session.query(Bestellung.db_bestelldatum)
-    str_date = str(date[0])
-    print(str_date)
-    dt = datetime.datetime.strptime(str_date, '%Y-%m-%d').strftime('%d.%m.%Y')
-    result.append(dt)
-    print(result)
+    # date = db_session.query(Bestellung.db_bestelldatum)
+    # str_date = str(date[0])
+    # print(str_date)
+    # dt = datetime.datetime.strptime(str_date, '%Y-%m-%d').strftime('%d.%m.%Y')
+    # result.append(dt)
+    # print(result)
+    
 @app.route('/bestellungen')
 @login_required
 def bestellungen():
@@ -199,7 +212,7 @@ def create_dozent():
 @app.route('/kurse', methods=('GET', 'POST'))
 @login_required
 def kurse():
-    result = db_session.query(Kurs.db_kurs_id, Kurs.db_kurs_titel, Kurs.db_dozent_id, Kurs.db_kategorie_id,)
+    result = db_session.query(Kurs.db_kurs_id, Kurs.db_kurs_titel, Kurs.db_dozent_id, Kurs.db_kategorie_id)
     return render_template('kurse.html', kurse=result)
 
 @app.route('/kurserstellung', methods=('GET', 'POST'))
@@ -216,6 +229,33 @@ def create_kurs():
         db_session.commit()
         return redirect(url_for('kurse'))
     return render_template('kurse.html')
+
+@app.route('/api/bestellungen')
+def api_get_bestellungen():
+    api_bestellungen = db_session.query(Bestellung.db_bestellung_id, Bestellung.db_schueler_id, Bestellung.db_kurs_id, Bestellung.db_bestellstatus, Bestellung.db_bestelldatum)
+    output = []
+    for api_bestellung in api_bestellungen:
+        api_bestellung_data = {'id': api_bestellung.db_bestellung_id, 'schueler': api_bestellung.db_schueler_id, 'kurs': api_bestellung.db_kurs_id, 'status': api_bestellung.db_bestellstatus, 'datum': api_bestellungen.db_bestellstatus}
+        output.append(api_bestellung_data)
+    return {"bestellungen": output}
+
+@app.route('/api/kurse')
+def api_get_kurse():
+    api_kurse = db_session.query(Kurs.db_kurs_id, Kurs.db_kurs_titel)
+    output = []
+    for api_kurs in api_kurse:
+        api_kurs_data = {'id': api_kurs.db_kurs_id, 'titel': api_kurs.db_kurs_titel}
+        output.append(api_kurs_data)
+    return {"kurse": output}
+
+@app.route('/api/kurse/<db_kurs_id>')
+def api_get_kurs(db_kurs_id):
+    api_kurs = Kurs.query.get_or_404(db_kurs_id)
+    return {'id': api_kurs.db_kurs_id, 'titel': api_kurs.db_kurs_titel}
+
+def query():
+    return db_session.query(Kurs)
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port='5000', debug=True)
