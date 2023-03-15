@@ -5,20 +5,13 @@ from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_login.utils import fresh_login_required, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, asc, desc, select
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, synonym_for
 from sqlalchemy.orm import Query, scoped_session, sessionmaker
 from sqlalchemy.sql.expression import exists, func
 from user import User
 import datetime
 
-import requests
-import json
-
-# response = requests.get('http://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow')
-# print(response)
-
 basedir = os.path.abspath(os.path.dirname(__file__))
-db = SQLAlchemy()
 app = Flask(__name__)
 
 engine = create_engine("mariadb+mariadbconnector://sqlkiddie3:SuperUnsicheresPasswort@127.0.0.1:3306/spielwiese_philipp")
@@ -29,6 +22,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'da
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '\xeaF\xa9\x88\xda\xf6\x82\xf4\xa7=\xd6\xa0\xeb[F\xd1A6G\xe0\xc6W2\xb0'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+
+db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -42,14 +37,8 @@ class Dozent(Base):
     __table__ = Base.metadata.tables['DOZENT']
 class Kategorie(Base):
     __table__ = Base.metadata.tables['KATEGORIE']
-# class Kurs(Base):
-#     __table__ = Base.metadata.tables['KURS']
-class Kurs(db.Model):
-    __tablename__ = 'KURS'
-    db_kurs_id = db.Column(db.Integer, primary_key = True)
-    db_kategorie_id = db.Column(db.Integer)
-    db_dozent_id = db.Column(db.Integer)
-    db_kurs_titel = db.Column(db.String(25))
+class Kurs(Base):
+    __table__ = Base.metadata.tables['KURS']
 class Preisklasse(Base):
     __table__ = Base.metadata.tables['PREISKLASSE']
 class Schueler(Base):
@@ -111,7 +100,7 @@ def login_check(l_email, l_passwort, byte_l_passwort):
     dbpw = None
     dbpw_query = select(Dozent.db_passwort).where(Dozent.db_email==l_email)
     with engine.connect() as conn:
-        for pwdic in conn.execute(dbpw_query):    
+        for pwdic in conn.execute(dbpw_query):
             dbpw = bytes(pwdic[0], 'utf-8')
     if dbpw != None and bcrypt.checkpw(byte_l_passwort, dbpw):
         dozent = User(l_email, l_passwort, 'dozent', 'salt')
@@ -129,20 +118,12 @@ def logout():
 @login_required
 def index():
     return render_template('index.html')
-
-    # date = db_session.query(Bestellung.db_bestelldatum)
-    # str_date = str(date[0])
-    # print(str_date)
-    # dt = datetime.datetime.strptime(str_date, '%Y-%m-%d').strftime('%d.%m.%Y')
-    # result.append(dt)
-    # print(result)
     
 @app.route('/bestellungen')
 @login_required
 def bestellungen():
     result = db_session.query(Bestellung.db_bestellung_id, Bestellung.db_schueler_id, Bestellung.db_kurs_id, Bestellung.db_bestellstatus, Bestellung.db_bestelldatum)
     result = [(r[0], r[1], r[2], r[3], datetime.datetime.strptime(r[4], '%Y-%m-%d').strftime('%d.%m.%Y')) for r in result]
-
     return render_template('bestellungen.html', bestellung=result)
 
 @app.route('/bestellungen', methods=('GET', 'POST'))
@@ -235,27 +216,29 @@ def api_get_bestellungen():
     api_bestellungen = db_session.query(Bestellung.db_bestellung_id, Bestellung.db_schueler_id, Bestellung.db_kurs_id, Bestellung.db_bestellstatus, Bestellung.db_bestelldatum)
     output = []
     for api_bestellung in api_bestellungen:
-        api_bestellung_data = {'id': api_bestellung.db_bestellung_id, 'schueler': api_bestellung.db_schueler_id, 'kurs': api_bestellung.db_kurs_id, 'status': api_bestellung.db_bestellstatus, 'datum': api_bestellungen.db_bestellstatus}
+        api_bestellung_data = {'id': api_bestellung.db_bestellung_id, 'schueler': api_bestellung.db_schueler_id, 'kurs': api_bestellung.db_kurs_id, 'status': api_bestellung.db_bestellstatus, 'datum': api_bestellung.db_bestelldatum}
         output.append(api_bestellung_data)
     return {"bestellungen": output}
 
 @app.route('/api/kurse')
 def api_get_kurse():
     api_kurse = db_session.query(Kurs.db_kurs_id, Kurs.db_kurs_titel)
+    print(api_kurse)
     output = []
     for api_kurs in api_kurse:
         api_kurs_data = {'id': api_kurs.db_kurs_id, 'titel': api_kurs.db_kurs_titel}
         output.append(api_kurs_data)
     return {"kurse": output}
 
-@app.route('/api/kurse/<db_kurs_id>')
-def api_get_kurs(db_kurs_id):
-    api_kurs = Kurs.query.get_or_404(db_kurs_id)
-    return {'id': api_kurs.db_kurs_id, 'titel': api_kurs.db_kurs_titel}
-
-def query():
-    return db_session.query(Kurs)
-
+@app.route('/api/kurse/<int:api_kid>')
+def api_get_kurs(api_kid):
+    api_kid_query = select(Kurs.db_kurs_id, Kurs.db_kategorie_id, Kurs.db_dozent_id, Kurs.db_kurs_titel).where(Kurs.db_kurs_id==api_kid)
+    with engine.connect() as conn:
+        for apidic in conn.execute(api_kid_query):
+            api_kurs_data = {'kurs-id': apidic[0], 'kategorie': apidic[1], 'dozent-id': apidic[2], 'kurstitel': apidic[3]}
+            output = []
+            output.append(api_kurs_data)
+            return output
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port='5000', debug=True)
